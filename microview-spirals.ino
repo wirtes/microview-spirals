@@ -5,6 +5,8 @@ Al Wirtes, wirtes@gmail.com
 
 This sketch draws random spirals on the MicroView display.
 
+Updated 2015-04-04 by wirtes@gmail.com - Added clockwise spirals and randomized spin direction.
+
 This software is as-is without warranty.
 ******************************************************************************/
 #include <MicroView.h>
@@ -13,6 +15,7 @@ int SCREEN_HEIGHT = uView.getLCDHeight();
 int x = 0;
 int y = 0;
 char color = 'BLACK';
+int spin = 1; // Direction of twist: anti-clockwise = 0; clockwise = !0
 // Play with these values to change the design
 // These are overwritten with random numbers, but these values
 // display a nice, loose spiral effect. 
@@ -34,18 +37,25 @@ void loop() {
   density = random(1,12);
   draw_speed = (int) random(3,15);
   iterations = 40 * density;
-  drawSpiral(WHITE, density, draw_speed, iterations);
-  drawSpiral(BLACK, density, draw_speed, iterations);
+  spin = (int) random(0,2);
+  drawSpiral(WHITE, density, draw_speed, iterations, spin);
+  drawSpiral(BLACK, density, draw_speed, iterations, spin);
 }
 
-void drawSpiral(char clr, long density, int draw_speed, int iterations) 
+void drawSpiral(char clr, long density, int draw_speed, int iterations, int spin) 
 {
   
   for (int i=0; i<iterations; i++)
   {
     delay(draw_speed);
-      x = (i * cos(i)/density + cent_x);
-      y = (i * sin(i)/density + cent_y);
+      if (spin == 0) { // Twist anti-clockwise
+        x = (i * cos(i)/density + cent_x);
+        y = (i * sin(i)/density + cent_y);
+      } else {
+        x = (i * sin(i)/density + cent_x);
+        y = (i * cos(i)/density + cent_y);
+      }
+
     if (x > 0 && x < SCREEN_WIDTH && y > 0 && y < SCREEN_HEIGHT) 
     {
       uView.pixel(x,y,clr,NORM);
